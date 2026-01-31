@@ -1,6 +1,4 @@
 # Docker Compose - Scudd Observability Stack
-version: "3.8"
-
 services:
   # Prometheus - Metrics Collection
   prometheus:
@@ -51,7 +49,7 @@ services:
   scudd-exporter:
     build:
       context: ..
-      dockerfile: Dockerfile.exporter
+      dockerfile: docker/Dockerfile.exporter
     container_name: scudd-exporter
     ports:
       - "8000:8000"  # Prometheus metrics
