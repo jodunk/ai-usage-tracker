@@ -1,0 +1,254 @@
+{
+  "id": null,
+  "title": "Scudd Oracle - Token Usage & Budget",
+  "description": "Monitor Scudd's token consumption, costs, and budget usage",
+  "tags": ["scudd", "oracle", "tokens", "budget"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 0,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Daily Budget Usage",
+      "type": "gauge",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"value": 0, "color": "green"},
+              {"value": 70, "color": "green"},
+              {"value": 80, "color": "yellow"},
+              {"value": 95, "color": "red"}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_budget_usage_percent",
+          "legendFormat": "Budget Used"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Total Cost Today (USD)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 4
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_cost_usd_total",
+          "legendFormat": "Total Cost"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Tasks Completed",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 0},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_tasks_total",
+          "legendFormat": "Tasks"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Budget Remaining (USD)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 4},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"value": 0, "color": "red"},
+              {"value": 1, "color": "yellow"},
+              {"value": 2, "color": "green"}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_budget_remaining_usd",
+          "legendFormat": "Remaining"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Total Tokens",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 4},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_tokens_total",
+          "legendFormat": "Tokens"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Cost by Model",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 4
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (model) (scudd_model_cost_usd)",
+          "legendFormat": "{{model}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Tokens by Model",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (model) (scudd_model_tokens_total)",
+          "legendFormat": "{{model}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Cost Over Time",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 6
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_cost_usd_total",
+          "legendFormat": "Total Cost"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Token Usage Over Time",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_tokens_total",
+          "legendFormat": "Total Tokens"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Tasks by Type",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (task_type) (scudd_task_tasks_total)",
+          "legendFormat": "{{task_type}}"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Cost by Task Type",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 6
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (task_type) (scudd_task_cost_usd)",
+          "legendFormat": "{{task_type}}"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Recent Tasks Log",
+      "type": "table",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32},
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "filterable": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "scudd_task_tasks_total",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    }
+  ]
+}

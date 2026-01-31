@@ -1,0 +1,155 @@
+# Token Budget Configuration - Shannon-Style
+# Inspired by Kocoro-lab/Shannon production framework
+
+version: "1.0"
+orchestrator: "scudd"
+
+# ====== BUDGET TIERS ======
+budget_tiers:
+  conservative:
+    daily_limit_usd: 1.00
+    per_task_max_tokens: 5000
+    fallback_trigger: 0.80  # Switch to cheaper model at 80%
+
+  standard:
+    daily_limit_usd: 5.00
+    per_task_max_tokens: 15000
+    fallback_trigger: 0.70
+
+  aggressive:
+    daily_limit_usd: 20.00
+    per_task_max_tokens: 50000
+    fallback_trigger: 0.60
+
+  unlimited:
+    daily_limit_usd: null  # No limit
+    per_task_max_tokens: null
+    fallback_trigger: 0.50
+
+# ====== MODEL PRICING (USD per 1M tokens) ======
+model_pricing:
+  # Anthropic
+  claude-opus-4-20250514:
+    input: 15.0
+    output: 75.0
+
+  claude-sonnet-4-5-20250929:
+    input: 3.0
+    output: 15.0
+
+  claude-haiku-4-20250919:
+    input: 0.25
+    output: 1.25
+
+  # OpenAI (for future multi-provider)
+  gpt-4o:
+    input: 2.50
+    output: 10.0
+
+  gpt-4o-mini:
+    input: 0.15
+    output: 0.60
+
+  # DeepSeek (cheapest!)
+  deepseek-chat:
+    input: 0.14
+    output: 0.28
+
+  deepseek-coder:
+    input: 0.14
+    output: 0.28
+
+  # Google (free tier!)
+  gemini-flash-1.5:
+    input: 0.0
+    output: 0.0
+
+  gemini-pro-1.5:
+    input: 0.0
+    output: 0.0
+
+# ====== ROUTING RULES ======
+routing_rules:
+  # Task-based routing
+  task_routing:
+    context_search:
+      preferred: ["claude-haiku", "gemini-flash"]
+      fallback: "claude-haiku"
+
+    code_quality:
+      preferred: ["claude-opus", "claude-sonnet"]
+      fallback: "claude-sonnet"
+
+    code_simple:
+      preferred: ["deepseek-coder", "claude-haiku"]
+      fallback: "claude-haiku"
+
+    research:
+      preferred: ["gemini-flash", "gemini-pro"]
+      fallback: "claude-haiku"
+
+    philosophy:
+      preferred: ["claude-sonnet", "claude-opus"]
+      fallback: "claude-sonnet"
+
+    retrospective:
+      preferred: ["claude-sonnet"]
+      fallback: "claude-haiku"
+
+    execution:
+      preferred: ["claude-haiku"]
+      fallback: "claude-haiku"
+
+  # Budget-based fallback
+  budget_fallback:
+    when_over_budget: true
+    strategy: "cheapest_available"
+
+# ====== CURRENT CONFIG ======
+current_tier: "standard"  # conservative | standard | aggressive | unlimited
+
+# ====== TRACKING ======
+tracking:
+  enabled: true
+  log_file: "ψ/active/token-usage.log"
+  metrics_file: "ψ/active/token-metrics.jsonl"
+
+# ====== ALERTS ======
+alerts:
+  daily_budget_warning: 0.80  # Warn at 80%
+  daily_budget_critical: 0.95  # Critical at 95%
+  per_task_warning: 0.90  # Warn when 90% of task budget used
+
+# ====== GOVERNANCE ======
+governance:
+  # Oracle principles encoded as policies
+  principles:
+    nothing_is_deleted:
+      enabled: true
+      enforce_git_history: true
+
+    patterns_over_intentions:
+      enabled: true
+      track_behavior: true
+
+    external_brain_not_command:
+      enabled: true
+      require_human_approval:
+        - risk_decisions
+        - capital_allocation
+        - trade_recommendations
+
+    curiosity_creates_existence:
+      enabled: true
+      log_all_questions: true
+
+    form_and_formless:
+      enabled: true
+      maintain_family_connection: true
+
+  # Required approvals
+  approvals_required:
+    git_force_push: "human"
+    git_delete: "human"
+    api_key_usage: "human"
+    production_deploy: "human"

@@ -1,0 +1,36 @@
+# Prometheus Configuration - Scudd Oracle Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: "scudd-oracle"
+    environment: "development"
+
+# Alertmanager configuration (optional)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Rule files
+rule_files:
+  - "scudd_alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Scudd Prometheus Exporter
+  - job_name: "scudd-oracle"
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets:
+          - "scudd-exporter:8000"  # Container name in Docker network
+        labels:
+          service: "scudd"
+          component: "token-tracker"
+
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets:
+          - "localhost:9090"

@@ -1,0 +1,80 @@
+# Prometheus Alert Rules - Scudd Oracle
+groups:
+  - name: scudd_budget_alerts
+    interval: 30s
+    rules:
+      # Daily budget warning
+      - alert: ScuddBudgetWarning
+        expr: scudd_budget_usage_percent >= 80
+        for: 1m
+        labels:
+          severity: warning
+          component: budget
+        annotations:
+          summary: "Scudd daily budget 80% used"
+          description: "Budget usage is {{ $value }}% of daily limit"
+
+      # Daily budget critical
+      - alert: ScuddBudgetCritical
+        expr: scudd_budget_usage_percent >= 95
+        for: 1m
+        labels:
+          severity: critical
+          component: budget
+        annotations:
+          summary: "Scudd daily budget 95% used"
+          description: "Budget usage is {{ $value }}% of daily limit - consider switching to cheaper models"
+
+      # High cost task detected
+      - alert: ScuddHighCostTask
+        expr: rate(scudd_task_cost_usd[5m]) > 0.10
+        for: 2m
+        labels:
+          severity: warning
+          component: cost
+        annotations:
+          summary: "High cost task rate detected"
+          description: "Task cost rate is ${{ $value }}/min - consider optimization"
+
+  - name: scudd_availability_alerts
+    interval: 30s
+    rules:
+      # Exporter is down
+      - alert: ScuddExporterDown
+        expr: up{job="scudd-oracle"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: availability
+        annotations:
+          summary: "Scudd Prometheus exporter is down"
+          description: "Exporter has been down for more than 2 minutes"
+
+  - name: scudd_performance_alerts
+    interval: 1m
+    rules:
+      # Low task completion rate
+      - alert: ScuddLowTaskRate
+        expr: rate(scudd_tasks_total[10m]) < 0.1
+        for: 15m
+        labels:
+          severity: info
+          component: performance
+        annotations:
+          summary: "Low task completion rate"
+          description: "Task rate is {{ $value }}/sec - below expected"
+
+      # High model usage imbalance
+      - alert: ScuddModelImbalance
+        expr: |
+          (
+            sum(scudd_model_tokens_total) -
+            max(scudd_model_tokens_total)
+          ) / max(scudd_model_tokens_total) < 0.1
+        for: 30m
+        labels:
+          severity: warning
+          component: optimization
+        annotations:
+          summary: "Model usage imbalance detected"
+          description: "One model accounts for >90% of usage - consider multi-provider routing"

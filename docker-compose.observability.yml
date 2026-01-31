@@ -1,0 +1,92 @@
+# Docker Compose - Scudd Observability Stack
+version: "3.8"
+
+services:
+  # Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:v2.50.0
+    container_name: scudd-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./scudd_alerts.yml:/etc/prometheus/scudd_alerts.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    restart: unless-stopped
+    networks:
+      - scudd-network
+
+  # Grafana - Visualization
+  grafana:
+    image: grafana/grafana:10.3.0
+    container_name: scudd-grafana
+    ports:
+      - "3030:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3030
+      - GF_INSTALL_PLUGINS=
+      - GF_PROVISIONING_ENABLED=true
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-dashboard.json:/etc/grafana/provisioning/dashboards/scudd-dashboard.json:ro
+      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./grafana-dashboard-provisioning.yml:/etc/grafana/provisioning/dashboards/scudd-dashboard-provisioning.yml:ro
+    restart: unless-stopped
+    networks:
+      - scudd-network
+    depends_on:
+      - prometheus
+
+  # Scudd Oracle Exporter - Token Metrics + SSE Events
+  scudd-exporter:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.exporter
+    container_name: scudd-exporter
+    ports:
+      - "8000:8000"  # Prometheus metrics
+      - "8001:8001"  # SSE event stream
+    volumes:
+      # Mount config files
+      - ./token-budget-config.yaml:/app/token-budget-config.yaml:ro
+      # Mount metrics storage (read-write for token-tracker, read-only for exporter)
+      - ../../ψ/active:/app/psi/active:rw
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - scudd-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Node Exporter (optional) - System metrics
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: scudd-node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - scudd-network
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  scudd-network:
+    driver: bridge

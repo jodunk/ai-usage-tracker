@@ -1,0 +1,13 @@
+# Grafana Dashboard Provisioning Configuration
+apiVersion: 1
+
+providers:
+  - name: 'Grafana'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      folder: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false

@@ -1,0 +1,40 @@
+{
+  "name": "ai-usage-tracker",
+  "version": "0.1.0",
+  "description": "AI Usage Tracker - Claude Code token usage observability",
+  "author": "Scudd (Volt Oracle)",
+  "license": "MIT",
+  "keywords": [
+    "token-tracking",
+    "observability",
+    "claude-code",
+    "prometheus",
+    "grafana",
+    "budget-monitoring"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jodunk/ai-usage-tracker.git"
+  },
+  "claude": {
+    "extensionId": "ai-usage-tracker",
+    "extensionName": "AI Usage Tracker",
+    "version": "0.1.0",
+    "description": "Track Claude Code token usage automatically via Stop Hook",
+    "type": "hook",
+    "capabilities": [
+      "UserPromptSubmit",
+      "Stop"
+    ]
+  },
+  "scripts": {
+    "record": "python3 token-tracker.py",
+    "exporter": "python3 prometheus_exporter.py",
+    "test": "python3 prometheus_exporter.py --test"
+  },
+  "dependencies": {
+    "prometheus-client": "^0.21.1",
+    "pyyaml": "^6.0.2"
+  },
+  "python": ">=3.8"
+}
