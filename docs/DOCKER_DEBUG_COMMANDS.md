@@ -158,7 +158,7 @@ docker exec scudd-exporter ls -la /app/psi/active/ | head -5
 docker exec scudd-exporter ls -la /app/
 
 # Check specific file
-docker exec scudd-exporter cat /app/token-budget-config.yaml | head -20
+docker exec scudd-exporter cat /app/config/token-budget-config.yaml | head -20
 
 # Check if file exists
 docker exec scudd-exporter test -f /app/psi/active/token-metrics.jsonl && echo "EXISTS" || echo "NOT FOUND"
@@ -356,7 +356,7 @@ docker exec scudd-exporter python3 -c "import yaml; print(yaml.__version__)"
 ### Fast Iteration
 ```bash
 # Copy file to running container (no rebuild needed)
-docker cp scripts/shannon-scud/prometheus_exporter.py scudd-exporter:/app/
+docker cp src/prometheus_exporter.py scudd-exporter:/app/
 docker restart scudd-exporter
 
 # Or exec into container and edit

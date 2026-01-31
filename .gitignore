@@ -45,3 +45,8 @@ token-metrics.jsonl
 
 # Keep docs folder structure
 docs/PATTERNS/
+
+# Runtime data (metrics, logs, etc.)
+data/
+*.jsonl
+*.log

@@ -9,8 +9,8 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./scudd_alerts.yml:/etc/prometheus/scudd_alerts.yml:ro
+      - ../config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../config/scudd_alerts.yml:/etc/prometheus/scudd_alerts.yml:ro
       - prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -38,9 +38,9 @@ services:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana-dashboard.json:/etc/grafana/provisioning/dashboards/scudd-dashboard.json:ro
-      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
-      - ./grafana-dashboard-provisioning.yml:/etc/grafana/provisioning/dashboards/scudd-dashboard-provisioning.yml:ro
+      - ../config/grafana/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/scudd-dashboard.json:ro
+      - ../config/grafana/grafana-datasource.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ../config/grafana/grafana-dashboard-provisioning.yml:/etc/grafana/provisioning/dashboards/scudd-dashboard-provisioning.yml:ro
     restart: unless-stopped
     networks:
       - scudd-network
@@ -50,7 +50,7 @@ services:
   # Scudd Oracle Exporter - Token Metrics + SSE Events
   scudd-exporter:
     build:
-      context: ../..
+      context: ..
       dockerfile: Dockerfile.exporter
     container_name: scudd-exporter
     ports:
@@ -58,7 +58,7 @@ services:
       - "8001:8001"  # SSE event stream
     volumes:
       # Mount config files
-      - ./token-budget-config.yaml:/app/token-budget-config.yaml:ro
+      - ../config/token-budget-config.yaml:/app/token-budget-config.yaml:ro
       # Mount metrics storage (read-write for token-tracker, read-only for exporter)
       - ../../ψ/active:/app/psi/active:rw
     environment:

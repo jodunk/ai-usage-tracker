@@ -27,7 +27,7 @@
 cd scripts/shannon-scud
 
 # Build images & start containers
-docker-compose -f docker-compose.observability.yml up -d --build
+docker-compose -f docker/docker-compose.observability.yml up -d --build
 ```
 
 **Output:**
@@ -42,7 +42,7 @@ docker-compose -f docker-compose.observability.yml up -d --build
 
 ```bash
 # Check all containers running
-docker-compose -f docker-compose.observability.yml ps
+docker-compose -f docker/docker-compose.observability.yml ps
 
 # Check exporter health
 curl http://localhost:8000/health
@@ -78,7 +78,7 @@ volt-oracle/
 │   ├── grafana-dashboard.json
 │   ├── grafana-datasource.yml
 │   ├── grafana-dashboard-provisioning.yml
-│   ├── token-budget-config.yaml
+│   ├── config/token-budget-config.yaml
 │   ├── prometheus_exporter.py
 │   ├── event_types.py
 │   ├── event_streamer.py
@@ -100,7 +100,7 @@ volt-oracle/
 - `8001` - SSE event stream
 
 **Volumes:**
-- `./token-budget-config.yaml:/app/token-budget-config.yaml:ro` - Budget config
+- `./config/token-budget-config.yaml:/app/config/token-budget-config.yaml:ro` - Budget config
 - `../../psi/active:/app/psi/active:rw` - Metrics storage
 
 **Health Check:**
@@ -139,30 +139,30 @@ curl http://localhost:8000/health
 
 ```bash
 # Start all services
-docker-compose -f docker-compose.observability.yml up -d
+docker-compose -f docker/docker-compose.observability.yml up -d
 
 # Start specific service
-docker-compose -f docker-compose.observability.yml up scudd-exporter
+docker-compose -f docker/docker-compose.observability.yml up scudd-exporter
 ```
 
 ### Stop Services
 
 ```bash
 # Stop all services
-docker-compose -f docker-compose.observability.yml down
+docker-compose -f docker/docker-compose.observability.yml down
 
 # Stop & remove volumes (⚠️ deletes data!)
-docker-compose -f docker-compose.observability.yml down -v
+docker-compose -f docker/docker-compose.observability.yml down -v
 ```
 
 ### View Logs
 
 ```bash
 # All services
-docker-compose -f docker-compose.observability.yml logs -f
+docker-compose -f docker/docker-compose.observability.yml logs -f
 
 # Specific service
-docker-compose -f docker-compose.observability.yml logs -f scudd-exporter
+docker-compose -f docker/docker-compose.observability.yml logs -f scudd-exporter
 docker logs scudd-exporter -f
 ```
 
@@ -170,10 +170,10 @@ docker logs scudd-exporter -f
 
 ```bash
 # Restart all
-docker-compose -f docker-compose.observability.yml restart
+docker-compose -f docker/docker-compose.observability.yml restart
 
 # Restart exporter
-docker-compose -f docker-compose.observability.yml restart scudd-exporter
+docker-compose -f docker/docker-compose.observability.yml restart scudd-exporter
 docker restart scudd-exporter
 ```
 
@@ -181,7 +181,7 @@ docker restart scudd-exporter
 
 ```bash
 # Rebuild exporter image
-docker-compose -f docker-compose.observability.yml up -d --build scudd-exporter
+docker-compose -f docker/docker-compose.observability.yml up -d --build scudd-exporter
 ```
 
 ## 🐛 Troubleshooting
@@ -211,7 +211,7 @@ docker logs scudd-exporter
 3. **Config file not found**
    ```bash
    # Verify paths in docker-compose.yml
-   ls -la scripts/shannon-scud/token-budget-config.yaml
+   ls -la scripts/shannon-scud/config/token-budget-config.yaml
    ls -la ψ/active
    ```
 
@@ -281,7 +281,7 @@ After modifying Python files (`prometheus_exporter.py`, `event_types.py`, etc.):
 ```bash
 # Rebuild & restart
 cd scripts/shannon-scud
-docker-compose -f docker-compose.observability.yml up -d --build scudd-exporter
+docker-compose -f docker/docker-compose.observability.yml up -d --build scudd-exporter
 ```
 
 ## 💾 Data Persistence
