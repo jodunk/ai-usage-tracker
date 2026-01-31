@@ -32,7 +32,7 @@ Originally developed as part of **Volt Oracle** (Scudd's research Oracle), AI Us
 ```bash
 # Record token usage
 cd ~/Documents/Project/ai-usage-tracker
-python3 token-tracker.py record \
+python3 src/token-tracker.py record \
   --task-type debugging \
   --model claude-sonnet-4-5 \
   --input-tokens 15000 \
@@ -43,7 +43,7 @@ python3 token-tracker.py record \
 
 ```bash
 # Start observability stack
-docker-compose -f docker-compose.observability.yml up -d
+docker-compose -f docker/docker-compose.observability.yml up -d
 
 # Access Grafana
 open http://localhost:3030
@@ -93,14 +93,14 @@ open http://localhost:3030
 ## Documentation
 
 ### User Guides
-- **[USER_GUIDE.md](USER_GUIDE.md)** — Token tracking commands, budget tiers
-- **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)** — Docker deployment guide
-- **[DOCKER_DEBUG_COMMANDS.md](DOCKER_DEBUG_COMMANDS.md)** — Troubleshooting reference
+- **[USER_GUIDE.md](docs/USER_GUIDE.md)** — Token tracking commands, budget tiers
+- **[DOCKER_GUIDE.md](docs/DOCKER_GUIDE.md)** — Docker deployment guide
+- **[DOCKER_DEBUG_COMMANDS.md](docs/DOCKER_DEBUG_COMMANDS.md)** — Troubleshooting reference
 
 ### Architecture & Status
-- **[OBSERVABILITY-STACK.md](OBSERVABILITY-STACK.md)** — Architecture overview
-- **[GRAFANA_PROVISIONING_GUIDE.md](GRAFANA_PROVISIONING_GUIDE.md)** — Dashboard setup
-- **[SHANNON-SCUD-PROGRESS.md](SHANNON-SCUD-PROGRESS.md)** — Implementation status
+- **[OBSERVABILITY-STACK.md](docs/OBSERVABILITY-STACK.md)** — Architecture overview
+- **[GRAFANA_PROVISIONING_GUIDE.md](docs/GRAFANA_PROVISIONING_GUIDE.md)** — Dashboard setup
+- **[SHANNON-SCUD-PROGRESS.md](docs/SHANNON-SCUD-PROGRESS.md)** — Implementation status
 
 ### Knowledge Base (Shared with Volt Oracle)
 - **Public Learnings** — Generic patterns (Docker, Python, Git)
@@ -158,7 +158,7 @@ cp -r . ~/.claude/plugins/ai-usage-tracker/
 | Pro | $20.00 | 80% ($16.00), 100% ($20.00) |
 | Enterprise | $100.00 | 80% ($80.00), 100% ($100.00) |
 
-**Config**: `token-budget-config.yaml`
+**Config**: `config/token-budget-config.yaml`
 
 ---
 
@@ -168,16 +168,34 @@ cp -r . ~/.claude/plugins/ai-usage-tracker/
 
 ```
 ai-usage-tracker/
-├── token-tracker.py        # Core tracker CLI
-├── prometheus_exporter.py  # Metrics HTTP server
-├── token-budget-config.yaml # Budget configuration
-├── docker-compose.observability.yml
-├── docs/                    # User guides
-│   ├── PATTERNS/          # Public learnings
+├── src/                    # Python source code
+│   ├── token-tracker.py       # Core tracker CLI
+│   ├── prometheus_exporter.py # Metrics HTTP server
+│   ├── event_streamer.py      # SSE event streaming
+│   ├── event_types.py         # Event type definitions
+│   └── multi-provider-router.py
+├── config/                 # Configuration files
+│   ├── prometheus.yml          # Prometheus config
+│   ├── token-budget-config.yaml # Budget tiers
+│   ├── scudd_alerts.yml        # Alert rules
+│   └── grafana/               # Grafana provisioning
+│       ├── grafana-dashboard.json
+│       ├── grafana-datasource.yml
+│       └── grafana-dashboard-provisioning.yml
+├── docker/                # Docker compose files
+│   └── docker-compose.observability.yml
+├── web/                   # Web interface
+│   └── sse-client.html
+├── docs/                  # Documentation
+│   ├── PATTERNS/            # Public learnings
+│   ├── USER_GUIDE.md
+│   ├── DOCKER_GUIDE.md
 │   └── ...
-└── grafana/                # Dashboards
-    ├── grafana-dashboard.json
-    └── grafana-datasource.yml
+├── data/                  # Runtime data (gitignored)
+├── scripts/               # Utility scripts
+├── README.md
+├── LICENSE
+└── package.json
 ```
 
 ### Contributing
