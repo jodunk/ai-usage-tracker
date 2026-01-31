@@ -16,7 +16,7 @@ import logging
 # ====== CONFIGURATION ======
 # Paths relative to project root (git repository root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
-CONFIG_FILE = PROJECT_ROOT / "scripts" / "shannon-scud" / "token-budget-config.yaml"
+CONFIG_FILE = PROJECT_ROOT / "config" / "token-budget-config.yaml"
 USAGE_LOG = PROJECT_ROOT / "ψ" / "active" / "token-usage.log"
 METRICS_FILE = PROJECT_ROOT / "ψ" / "active" / "token-metrics.jsonl"
 

@@ -47,7 +47,7 @@ else:
     # Running in local development
     PROJECT_ROOT = Path(__file__).parent.parent.parent
     METRICS_FILE = PROJECT_ROOT / "ψ" / "active" / "token-metrics.jsonl"
-    CONFIG_FILE = PROJECT_ROOT / "scripts" / "shannon-scud" / "token-budget-config.yaml"
+    CONFIG_FILE = PROJECT_ROOT / "config" / "token-budget-config.yaml"
 
 # Configure logging
 logging.basicConfig(

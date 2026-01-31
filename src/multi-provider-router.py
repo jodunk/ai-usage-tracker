@@ -17,7 +17,8 @@ from typing import Dict, List, Optional, Any
 from enum import Enum
 
 # ====== CONFIGURATION ======
-CONFIG_FILE = Path("ψ/active/shannon-scud-implementation/token-budget-config.yaml")
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+CONFIG_FILE = PROJECT_ROOT / "config" / "token-budget-config.yaml"
 
 
 class Provider(Enum):
